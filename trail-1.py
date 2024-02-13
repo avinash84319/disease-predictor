@@ -50,32 +50,34 @@ common_diseases = {
 }
 
 def create_common_dataset(num_samples_per_disease=100):
-    # Create an empty list to store dictionaries
     data = []
 
-    # Populate the list with common and less severe conditions
+    id=1
     for disease, symptoms in common_diseases.items():
         for _ in range(num_samples_per_disease):
-            # Patient description with variations in English proficiency and simplified language
             english_proficiency = random.choice(["limited", "moderate", "good"])
             patient_description = generate_patient_description(symptoms, english_proficiency)
 
-            # Append a dictionary to the list
-            data.append({
-                "Disease": disease,
-                "Symptoms": ', '.join(symptoms),
-                "Patient_Description": patient_description
-            })
-
-            # Include shorter sentences for each disease
             short_sentence = generate_short_sentence(symptoms)
             data.append({
+                "Disease_ID": id,
                 "Disease": disease,
                 "Symptoms": ', '.join(symptoms),
-                "Patient_Description": short_sentence
+                "Patient_Description": patient_description + f" The symptoms started from {random.randint(1,7)} days before the day of appointment. "
+                                                           f"Symptoms got worse: {random.choice(['Yes', 'No'])}. On medication: {random.choice(['Yes', 'No'])}. "
+                                                           f"Related to previous condition: {random.choice(['Yes', 'No'])}."
             })
 
-    # Create a DataFrame from the list of dictionaries
+            data.append({
+                "Disease_ID": id,
+                "Disease": disease,
+                "Symptoms": ', '.join(symptoms),
+                "Patient_Description": short_sentence + f" The symptoms started from {random.randint(1,7)} days before the day of appointment. "
+                                                           f"Symptoms got worse: {random.choice(['Yes', 'No'])}. On medication: {random.choice(['Yes', 'No'])}. "
+                                                           f"Related to previous condition: {random.choice(['Yes', 'No'])}."
+            })
+        id+=1
+
     df = pd.DataFrame(data)
 
     return df
@@ -148,7 +150,7 @@ num_samples_per_disease = 1000
 common_dataset = create_common_dataset(num_samples_per_disease)
 
 # Save the dataset to a CSV file
-common_dataset.to_csv("common_medicine_symptoms_dataset.csv", index=False)
+common_dataset.to_csv("data_notp.csv", index=False)
 
 print(f"Common dataset created with {num_samples_per_disease} samples per disease. "
-      f"File saved as 'common_medicine_symptoms_dataset.csv'.")
+      f"File saved as 'data_notp.csv'.")
